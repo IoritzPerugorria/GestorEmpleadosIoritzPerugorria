@@ -1,16 +1,59 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.control.Label?>
-<?import javafx.scene.layout.VBox?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 
-<?import javafx.scene.control.Button?>
-<VBox alignment="CENTER" spacing="20.0" xmlns:fx="http://javafx.com/fxml"
-      fx:controller="org.example.gestorempleadosioritzperugorria.HelloController">
-  <padding>
-    <Insets bottom="20.0" left="20.0" right="20.0" top="20.0"/>
-  </padding>
+<VBox alignment="TOP_CENTER" prefHeight="800.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.example.gestorempleadosioritzperugorria.HelloController">
+   <children>
+      <HBox alignment="TOP_CENTER" prefHeight="100.0" prefWidth="200.0">
+         <children>
+         
+           <Label fx:id="welcomeText" alignment="TOP_CENTER" text="Gestor Empleados" textAlignment="CENTER">
+               <font>
+                  <Font name="Comic Sans MS Bold" size="36.0" />
+               </font>
+               <HBox.margin>
+                  <Insets top="25.0" />
+               </HBox.margin>
+            </Label>
+         </children>
+      </HBox>
+      <TabPane maxWidth="400.0" prefHeight="400.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab text="Nuevo Empleado">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefWidth="200.0">
+                     <children>
+                        <Label alignment="TOP_CENTER" layoutX="27.0" layoutY="38.0" text="Nombre">
+                           <graphic>
+                              <TextField alignment="TOP_LEFT" promptText="Escriba el nombre...">
+                                 <font>
+                                    <Font name="Comic Sans MS" size="12.0" />
+                                 </font></TextField>
+                           </graphic>
+                        </Label>
+                        <Label layoutX="27.0" layoutY="80.0" text="Puesto">
+                           <graphic>
+                              <ComboBox fx:id="combobox" prefWidth="150.0" promptText="Seleccione...">
 
-  <Label fx:id="welcomeText"/>
-  <Button text="Hello!" onAction="#onHelloButtonClick"/>
+                              </ComboBox>
+                           </graphic>
+                        </Label>
+                     </children></AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="Consultar">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0" />
+            </content>
+          </Tab>
+        </tabs>
+         <VBox.margin>
+            <Insets />
+         </VBox.margin>
+      </TabPane>
+      <Pagination prefHeight="200.0" prefWidth="200.0" />
+   </children>
 </VBox>
