@@ -1,5 +1,6 @@
 package org.example.gestorempleadosioritzperugorria;
 
+import Modelo.LectorTXT;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -25,6 +26,9 @@ public class ControllerPPrincipal implements Initializable {
     @FXML
     private Button botonCargar;
 
+    @FXML
+    private Label resultado;
+
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         combobox.setItems(FXCollections.observableArrayList(
@@ -33,6 +37,11 @@ public class ControllerPPrincipal implements Initializable {
         );
     }
 
+    /**
+     * El metodo primero carga un archivo usando el ActionEvent
+     * del parametro de entrada, y luego llama a LectorTXT
+     *
+     */
     @FXML
     public void cargarDesdeArchivo(ActionEvent event){
         FileChooser cargador = new FileChooser();
@@ -43,5 +52,10 @@ public class ControllerPPrincipal implements Initializable {
 
         Node node = (Node) event.getSource();
         File archivo = cargador.showOpenDialog(node.getScene().getWindow());
+
+        LectorTXT lector = new LectorTXT();
+
+        resultado.setText(lector.cargarDesdeArchivo(archivo));
+
     }
 }

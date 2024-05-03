@@ -47,7 +47,7 @@
                            </graphic></Label>
                         <Button layoutX="27.0" layoutY="186.0" mnemonicParsing="false" text="Insertar" />
                         <Button fx:id="botonCargar" layoutX="126.0" layoutY="186.0" mnemonicParsing="false" onAction="#cargarDesdeArchivo" text="Cargar" />
-                        <Label layoutX="94.0" layoutY="264.0" text="Label" />
+                        <Label fx:id="resultado" layoutX="217.0" layoutY="190.0" />
                      </children></AnchorPane>
             </content>
           </Tab>
