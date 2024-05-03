@@ -6,4 +6,6 @@ module org.example.gestorempleadosioritzperugorria {
 
     opens org.example.gestorempleadosioritzperugorria to javafx.fxml;
     exports org.example.gestorempleadosioritzperugorria;
+    exports Controlador;
+    opens Controlador to javafx.fxml;
 }

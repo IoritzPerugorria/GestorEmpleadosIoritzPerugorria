@@ -18,11 +18,11 @@ public class LectorTXT {
      */
     public String cargarDesdeArchivo(File archivo){
         String resultado; //El mensaje de retorno, se actualiza dependiendo si salta excepcion o no.
-        ArrayList<ArrayList<String>> filas = new ArrayList<>(); //Contiene Arraylist de filas
 
         try{
             Scanner scanner = new Scanner(archivo); //Scanner para el archivo
             String cadena;
+            ConexionBBDD conexion = new ConexionBBDD();
 
             while (scanner.hasNext()){
                 cadena = scanner.nextLine();
@@ -30,11 +30,8 @@ public class LectorTXT {
 
                 ArrayList<String> columnas = new ArrayList<>(Arrays.asList(coleccion)); //Convierte el Array a Arraylist
 
-                filas.add(columnas);
+                resultado = conexion.insertar(columnas); //Envia el Arraylist para que sea insertado
             }
-            ConexionBBDD conexion = new ConexionBBDD();
-            resultado = conexion.insertarDesdeArchivo(filas); //Envia el Arraylist 2D para que sean insertados
-
         }
         catch (IOException f){
             resultado = "Hay un problema en la lectura del archivo";
