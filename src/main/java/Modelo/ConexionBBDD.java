@@ -1,8 +1,6 @@
 package Modelo;
 
 import java.sql.*;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class ConexionBBDD {
@@ -44,8 +42,13 @@ public class ConexionBBDD {
         }
     }
 
+    /**
+     * Recibe un Arraylist 2D como parametro, e inserta los datos, mediante un
+     * for, de dentro de la BBDD conectada. Retorna un mensaje de confirmacion si
+     * se insertan los datos, y otro de error si algo ha salido mal.
+     */
     public String insertarDesdeArchivo(ArrayList<ArrayList<String>> filas){
-        String resultado = "";
+        String resultado = ""; //El mensaje de retorno, se actualiza dependiendo si salta excepcion o no.
         try{
             if (conexion != null){
                 for (ArrayList<String> columnas : filas) {
@@ -65,6 +68,9 @@ public class ConexionBBDD {
             }
         } catch (SQLException e) {
             resultado = "No se han podido insertar los datos. Intentalo de nuevo.";
+        }
+        finally {
+            this.desconectar();
         }
         return resultado;
     }

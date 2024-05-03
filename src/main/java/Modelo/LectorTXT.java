@@ -8,28 +8,39 @@ import java.util.Scanner;
 
 public class LectorTXT {
 
+    /**
+     * Recibe como parametro un archivo (tiene que ser de texto), y
+     * despues lee el contenido e introduce los valores de una fila en
+     * un Arraylist, y luego introduce ese Arraylist en ontro Arraylist
+     * de Arraylist, creando un Arraylist 2D. Retorna un mensaje de
+     * confirmacion si tod0 ha salido bien, y uno de error si algo ha
+     * ido mal.
+     */
     public String cargarDesdeArchivo(File archivo){
-        String resultado = "";
-        ArrayList<ArrayList<String>> filas = new ArrayList<>();
+        String resultado; //El mensaje de retorno, se actualiza dependiendo si salta excepcion o no.
+        ArrayList<ArrayList<String>> filas = new ArrayList<>(); //Contiene Arraylist de filas
 
         try{
-            Scanner scanner = new Scanner(archivo);
+            Scanner scanner = new Scanner(archivo); //Scanner para el archivo
             String cadena;
 
             while (scanner.hasNext()){
                 cadena = scanner.nextLine();
-                String[] coleccion = cadena.split(";");
+                String[] coleccion = cadena.split(";"); //Divide la linea usando ; como regex
 
-                ArrayList<String> columnas = new ArrayList<>(Arrays.asList(coleccion));
+                ArrayList<String> columnas = new ArrayList<>(Arrays.asList(coleccion)); //Convierte el Array a Arraylist
 
                 filas.add(columnas);
             }
             ConexionBBDD conexion = new ConexionBBDD();
-            resultado = conexion.insertarDesdeArchivo(filas);
+            resultado = conexion.insertarDesdeArchivo(filas); //Envia el Arraylist 2D para que sean insertados
 
         }
         catch (IOException f){
             resultado = "Hay un problema en la lectura del archivo";
+        }
+        catch (IndexOutOfBoundsException i){
+            resultado = "El formato del archivo no es correcto";
         }
         return resultado;
     }
