@@ -17,7 +17,7 @@ public class LectorTXT {
      * ido mal.
      */
     public String cargarDesdeArchivo(File archivo){
-        String resultado; //El mensaje de retorno, se actualiza dependiendo si salta excepcion o no.
+        String resultado = ""; //El mensaje de retorno, se actualiza dependiendo si salta excepcion o no.
 
         try{
             Scanner scanner = new Scanner(archivo); //Scanner para el archivo
