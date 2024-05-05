@@ -79,8 +79,17 @@ public class ControllerPPrincipal implements Initializable {
     }
 
     /**
-     * El metodo primero carga un archivo usando el ActionEvent
-     * del parametro de entrada, y luego llama a LectorTXT
+     * El metodo carga el archivo de trabajadores ubicado en el proyecto y
+     * lo manda para que se inserten
+     */
+    public void cargar(){
+        File archivo = new File("src/main/resources/ArchivoTrabajadores/trabajadores.txt");
+        this.enviarTXT(archivo);
+    }
+
+    /**
+     * El metodo abre un FileChooser para escoger un archivo de texto, y
+     * lo manda para que se inserten los empleados de dentro
      */
     @FXML
     public void cargarDesdeArchivo(ActionEvent event){
@@ -93,13 +102,17 @@ public class ControllerPPrincipal implements Initializable {
 
             Node node = (Node) event.getSource();
             File archivo = cargador.showOpenDialog(node.getScene().getWindow()); //Abrir una ventana para escojer archivo
+            this.enviarTXT(archivo);
+    }
 
-            if (archivo != null) {
-                LectorTXT lector = new LectorTXT();
-                resultado.setText(lector.cargarDesdeArchivo(archivo)); //El mensaje de retorno, dependiendo si ha salido bien o mal la insercion dice una cosa u otra.
-            }
-
-
+    /**
+     * El metodo recive un archivo TXT y lo manda a LectorTXT
+     */
+    public void enviarTXT(File archivo){
+        if (archivo != null) {
+            LectorTXT lector = new LectorTXT();
+            resultado.setText(lector.cargarDesdeArchivo(archivo)); //El mensaje de retorno, dependiendo si ha salido bien o mal la insercion dice una cosa u otra.
+        }
     }
 
     //Para el boton refrescar
