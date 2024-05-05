@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controlador.PantallaEditar">
+
+
+    <VBox alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" spacing="30.0" xmlns="http://javafx.com/javafx/17.0.2-ea" xmlns:fx="http://javafx.com/fxml/1">
+        <Label fx:id="labelTop" alignment="CENTER" contentDisplay="CENTER">
+            <font>
+              <Font size="30.0" />
+            </font>
+        </Label>
+
+        <Label alignment="TOP_CENTER" text="Nombre">
+            <graphic>
+                <TextField fx:id="nombre" alignment="TOP_LEFT" prefHeight="26.0" prefWidth="145.0" promptText="Escriba el nombre...">
+                </TextField>
+            </graphic>
+        </Label>
+        <Label text="Puesto">
+            <graphic>
+                <ComboBox fx:id="combobox" prefWidth="150.0" promptText="Seleccione...">
+
+                </ComboBox>
+            </graphic>
+        </Label>
+        <Label text="Salario">
+            <graphic>
+                <TextField fx:id="salario" prefWidth="150.0" promptText="Introduzca el salario..." />
+            </graphic>
+        </Label>
+        <HBox alignment="TOP_CENTER" prefHeight="0.0" prefWidth="488.0" spacing="50.0">
+            <Button mnemonicParsing="false" onAction="#editar" text="Editar" />
+        </HBox>
+      <Label fx:id="resultado" />
+
+    </VBox>
+</AnchorPane>

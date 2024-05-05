@@ -6,10 +6,6 @@ import java.util.ArrayList;
 
 public class ConexionBBDD {
 
-    private final String localUrl = "jdbc:mysql://localhost:3306/BD_GESTOR_EMPLEADOS";
-    private final String username = "root";
-    private final String localPassword = "root";
-
     private Connection conexion; //La misma conexion usada en tod0 el proyecto
 
     public ConexionBBDD(){
@@ -21,13 +17,15 @@ public class ConexionBBDD {
      */
     public void conectar(){
         try {
+            String localUrl = "jdbc:mysql://localhost:3306/BD_GESTOR_EMPLEADOS";
+            String username = "root";
+            String localPassword = "root";
             conexion = DriverManager.getConnection(localUrl, username, localPassword);
             System.out.println("Conexion establecida");
 
         } catch (SQLException e) {
             System.out.println("No se ha podido establecer conexion");
         }
-
     }
 
     /**
@@ -48,7 +46,7 @@ public class ConexionBBDD {
      * un mensaje de confirmacion si se insertan los datos, y otro de error si algo ha salido mal.
      */
     public String insertar(ArrayList<String> columnas){
-        String resultado = ""; //El mensaje de retorno, se actualiza dependiendo si salta excepcion o no.
+        String resultado; //El mensaje de retorno, se actualiza dependiendo si salta excepcion o no.
         try{
             if (conexion != null){
                     PreparedStatement ps = conexion.prepareStatement("INSERT INTO EMPLEADOS (NOMBRE, PUESTO, SALARIO, FECHA) VALUES(?,?,?,NOW())");
@@ -66,8 +64,29 @@ public class ConexionBBDD {
         } catch (SQLException e) {
             resultado = "No se han podido insertar los datos. Intentalo de nuevo.";
         }
-        finally {
-            this.desconectar();
+        return resultado;
+    }
+
+
+    /**
+     * Elimina un empleado de la BBDD
+     */
+    public String eliminar(String nombre){
+        String resultado; //El mensaje de retorno, se actualiza dependiendo si salta excepcion o no.
+        try{
+            if (conexion != null){
+                PreparedStatement ps = conexion.prepareStatement("DELETE FROM EMPLEADOS WHERE NOMBRE = ?");
+                ps.setString(1, nombre);
+
+                ps.executeUpdate();
+
+                resultado = "Se ha eliminado el empleado";
+            }
+            else{
+                resultado = "No se ha podido establecer conexion";
+            }
+        } catch (SQLException e) {
+            resultado = "No se han podido eliminar el empleado. Intentalo de nuevo.";
         }
         return resultado;
     }
@@ -118,6 +137,25 @@ public class ConexionBBDD {
         return valores;
     }
 
+    /**
+     * Edita los datos de un empleado ya insertado. Recibe como parametro un
+     * Arraylist con los valores nuevos, y el nombre del empleado que se quiere cambiar.
+     */
+    public String editar(ArrayList<String> valores, String nombreReal){
+        String resultado;
+        try{
+            PreparedStatement ps = conexion.prepareStatement("UPDATE EMPLEADOS SET NOMBRE = ?, PUESTO = ?, SALARIO = ?, FECHA = NOW() WHERE NOMBRE = ?");
+            ps.setString(1, valores.get(0));
+            ps.setString(2, valores.get(1));
+            ps.setString(3, valores.get(2));
+            ps.setString(4, nombreReal);
+            ps.executeUpdate();
 
-
+            resultado = "Se han modificado los datos del empleado";
+        }
+        catch (SQLException s){
+            resultado = "No se han podido modificar los datos del empleado";
+        }
+        return resultado;
+    }
 }

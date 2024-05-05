@@ -1,22 +1,31 @@
 package Controlador;
 
+import Modelo.Alertas;
 import Modelo.ConexionBBDD;
 import Modelo.LectorTXT;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.fxml.Initializable;
 import javafx.scene.Node;
 
+import javafx.scene.Parent;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+
 import javafx.stage.FileChooser;
+
+import javafx.stage.Stage;
+import org.example.gestorempleadosioritzperugorria.Main;
 
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Objects;
 import java.util.ResourceBundle;
 
 public class ControllerPPrincipal implements Initializable {
@@ -31,6 +40,8 @@ public class ControllerPPrincipal implements Initializable {
     private TextField salario;
     @FXML
     private Label resultado; // El mensaje de resultado de la primera pantalla
+    @FXML
+    private Label resultadoConsultas;
 
     //Labels de la segunda pantalla
     @FXML
@@ -44,7 +55,7 @@ public class ControllerPPrincipal implements Initializable {
     @FXML
     private Label labelFecha;
 
-
+    private final ConexionBBDD conexion = new ConexionBBDD(); //La conexion que se usa en tod0 el proyecto
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -59,16 +70,12 @@ public class ControllerPPrincipal implements Initializable {
         El siguiente codigo sirve para que al seleccionar un item en ListView, se llame al metodo que
         muestra la informacion.
          */
-        vistaLista.getSelectionModel().selectedItemProperty().addListener(new ChangeListener<String>() {
-            @Override
-            public void changed(ObservableValue<? extends String> observableValue, String s, String t1) {
-                ConexionBBDD conexion = new ConexionBBDD();
-                String nombreLista = vistaLista.getSelectionModel().getSelectedItem();
-                ArrayList<String> valores = conexion.mostrarEmpleado(nombreLista);
-                mostrarEmpleado(valores);
-                conexion.desconectar();
-            }
+        vistaLista.getSelectionModel().selectedItemProperty().addListener((observableValue, s, t1) -> {
+            String nombreLista = vistaLista.getSelectionModel().getSelectedItem();
+            ArrayList<String> valores = conexion.mostrarEmpleado(nombreLista);
+            mostrarEmpleado(valores);
         });
+
     }
 
     /**
@@ -77,25 +84,30 @@ public class ControllerPPrincipal implements Initializable {
      */
     @FXML
     public void cargarDesdeArchivo(ActionEvent event){
-        FileChooser cargador = new FileChooser();
 
-        cargador.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Archivos de texto", "*.txt") //Solo poder elejir archivos .txt
-        );
+            FileChooser cargador = new FileChooser();
 
-        Node node = (Node) event.getSource();
-        File archivo = cargador.showOpenDialog(node.getScene().getWindow()); //Abrir una ventana para escojer archivo
+            cargador.getExtensionFilters().addAll(
+                    new FileChooser.ExtensionFilter("Archivos de texto", "*.txt") //Solo poder elejir archivos .txt
+            );
 
-        if (archivo != null) {
-            LectorTXT lector = new LectorTXT();
-            resultado.setText(lector.cargarDesdeArchivo(archivo)); //El mensaje de retorno, dependiendo si ha salido bien o mal la insercion dice una cosa u otra.
-        }
+            Node node = (Node) event.getSource();
+            File archivo = cargador.showOpenDialog(node.getScene().getWindow()); //Abrir una ventana para escojer archivo
+
+            if (archivo != null) {
+                LectorTXT lector = new LectorTXT();
+                resultado.setText(lector.cargarDesdeArchivo(archivo)); //El mensaje de retorno, dependiendo si ha salido bien o mal la insercion dice una cosa u otra.
+            }
+
+
     }
 
     //Para el boton refrescar
     @FXML
     public void refrescar(){
         this.cargarListView();
+        resultado.setText("");
+        resultadoConsultas.setText("");
     }
 
     /**
@@ -105,17 +117,13 @@ public class ControllerPPrincipal implements Initializable {
      */
     public void cargarListView(){
         vistaLista.getItems().clear(); //Vaciar el ListView en caso de que se valla a refrescar
-        ConexionBBDD conexion = new ConexionBBDD();
 
         ArrayList<String> nombres = conexion.consultarNombres(); //Obtener los nombres de empleados
 
         for(String nombre : nombres){
             vistaLista.getItems().add(nombre);
         }
-
-        conexion.desconectar();
     }
-
 
     /**
      * Extrae los valores del Arraylist de entrada y los introduce en
@@ -124,6 +132,12 @@ public class ControllerPPrincipal implements Initializable {
      * contendria un mensaje de error.
      */
     public void mostrarEmpleado(ArrayList<String> valores){
+        //Primero vacia los valores, en caso de excepcion
+        labelID.setText("");
+        labelNombre.setText("");
+        labelPuesto.setText("");
+        labelSueldo.setText("");
+        labelFecha.setText("");
         try {
             labelID.setText(valores.getFirst());
             labelNombre.setText(valores.get(1));
@@ -133,7 +147,12 @@ public class ControllerPPrincipal implements Initializable {
             valores.clear();
         }
         catch (Exception e){
-            labelID.setText(valores.getFirst());
+            try {
+                labelID.setText(valores.getFirst());
+            }
+            catch (Exception e1){
+                System.out.println("ERROR");
+            }
         }
 
     }
@@ -143,20 +162,75 @@ public class ControllerPPrincipal implements Initializable {
      * nuevo empleado.
      */
     @FXML
-    public void insertarEmpleado(ActionEvent event){
-        if(!(nombre.getText().trim().isEmpty()) && !(salario.getText().trim().isEmpty())){ //TODO comprobar el combobox
-            ConexionBBDD conexion = new ConexionBBDD();
-            ArrayList<String> columnas = new ArrayList<>();
+    public void insertarEmpleado() {
+        try {
+            if (!(nombre.getText().trim().isEmpty()) && !(salario.getText().trim().isEmpty()) && (combobox.getValue() != null)) { //Comprueba que los valores no esten vacios
+                ArrayList<String> columnas = new ArrayList<>();
 
-            columnas.add(nombre.getText());
-            columnas.add(combobox.getValue());
-            columnas.add(salario.getText());
+                Integer.parseInt(salario.getText()); //Comprueba si el salario es un numero. Si no lo es, salta el catch.
 
-            resultado.setText(conexion.insertar(columnas)); //Se envia el Arraylist para que sea insertado
-            conexion.desconectar();
+                columnas.add(nombre.getText());
+                columnas.add(combobox.getValue());
+                columnas.add(salario.getText());
+
+                resultado.setText(conexion.insertar(columnas)); //Se envia el Arraylist para que sea insertado
+            } else {
+                resultado.setText("Rellene todos los campos"); //Mensaje de error
+            }
         }
-        else{
-            resultado.setText("Rellene todos los campos"); //Mensaje de error
+        catch (NumberFormatException e){
+            resultado.setText("El salario debe de ser un numero");
         }
+    }
+
+    /**
+     * Para el boton editar. Abre una nueva ventana, cargando pantallaEditar.fxml,
+     * y envia la informacion del empleado.
+     */
+    @FXML
+    public void editar(){
+        try{
+            Stage stage = new Stage();
+            FXMLLoader fxmlLoader = new FXMLLoader(Main.class.getResource("pantallaEditar.fxml"));
+
+            Parent root = fxmlLoader.load();
+            PantallaEditar pantallaEditar = fxmlLoader.getController();
+            String nombreLista = vistaLista.getSelectionModel().getSelectedItem();
+            ArrayList<String> valores = conexion.mostrarEmpleado(nombreLista);
+            pantallaEditar.cargarDatos(valores);
+
+            Scene scene = new Scene(root, 600, 400);
+
+            stage.setTitle("Editar Empleados");
+            stage.setMaxWidth(600);
+            stage.setMaxHeight(400);
+            stage.setMinWidth(600);
+            stage.setMinHeight(400);
+            Image imagen = new Image(Objects.requireNonNull(getClass().getResourceAsStream("/Imagenes/icon.png")));
+            stage.getIcons().add(imagen);
+            stage.setScene(scene);
+            stage.show();
+        }
+        catch (IOException e){
+            resultadoConsultas.setText("Error al mostrar la vista");
+        }
+        catch (IndexOutOfBoundsException n){
+            resultadoConsultas.setText("Selecciona un empleado");
+        }
+    }
+
+    /**
+     * Elimina un empleado de la BBDD. Tambien, crea una alerta para
+     * cuando se vaya a eliminar un empleado.
+     */
+    @FXML
+    public void eliminar(){
+
+            Alertas alert = new Alertas("Confirmacion", "¿Seguro que quieres borrar el empleado?", Alert.AlertType.CONFIRMATION);
+            if (alert.alertaEliminar()) {
+                String nombre = vistaLista.getSelectionModel().selectedItemProperty().get(); //Obtiene el nombre
+                String resultado = conexion.eliminar(nombre); //Envia el nombre el empleado paras ser eliminado
+                resultadoConsultas.setText(resultado); //Setea el mensaje de confirmacion
+            }
     }
 }
