@@ -30,6 +30,8 @@ public class LectorTXT {
 
                 ArrayList<String> columnas = new ArrayList<>(Arrays.asList(coleccion)); //Convierte el Array a Arraylist
 
+                Integer.parseInt(columnas.get(2)); // Comprueba si el valor salario es numero. Si no lo es, salta el catch
+
                 resultado = conexion.insertar(columnas); //Envia el Arraylist para que sea insertado
             }
         }
@@ -38,6 +40,9 @@ public class LectorTXT {
         }
         catch (IndexOutOfBoundsException i){
             resultado = "El formato del archivo no es correcto";
+        }
+        catch (NumberFormatException n){
+            resultado = "Algun dato no era correcto, No todos los datos han sido introducidos";
         }
         return resultado;
     }

@@ -106,7 +106,7 @@ public class ControllerPPrincipal implements Initializable {
     }
 
     /**
-     * El metodo recive un archivo TXT y lo manda a LectorTXT
+     * El metodo recive un archivo .txt y lo manda a LectorTXT
      */
     public void enviarTXT(File archivo){
         if (archivo != null) {
@@ -115,7 +115,7 @@ public class ControllerPPrincipal implements Initializable {
         }
     }
 
-    //Para el boton refrescar
+    //Para el boton refrescar. Vacia los mensajes y llama a cargarListView para que se muestren de nuevo los empleados
     @FXML
     public void refrescar(){
         this.cargarListView();
@@ -133,7 +133,7 @@ public class ControllerPPrincipal implements Initializable {
 
         ArrayList<String> nombres = conexion.consultarNombres(); //Obtener los nombres de empleados
 
-        for(String nombre : nombres){
+        for(String nombre : nombres){ //Itera para insertar los nombres uno a uno
             vistaLista.getItems().add(nombre);
         }
     }
@@ -164,7 +164,7 @@ public class ControllerPPrincipal implements Initializable {
                 labelID.setText(valores.getFirst());
             }
             catch (Exception e1){
-                System.out.println("ERROR");
+                System.out.println("Refrescar");
             }
         }
 
